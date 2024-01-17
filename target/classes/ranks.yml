@@ -1,0 +1,16 @@
+guest:
+  name: "Joueur"
+  prefix: "&4Joueur"
+  permissions:
+    - bungeecord.command.server
+    - bungeecord.command.list
+owner:
+  name: "Fondateur"
+  prefix: "&4Admin"
+  permissions:
+    - bungeecord.command.alert
+    - bungeecord.command.end
+    - bungeecord.command.ip
+    - bungeecord.command.reload
+    - bungeecord.command.kick
+    - ciaracore.command.rankset

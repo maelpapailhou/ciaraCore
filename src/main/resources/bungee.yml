@@ -1,0 +1,5 @@
+name: CiaraCore
+version: '${project.version}'
+main: com.ciaracore.CiaraCore
+author: fatal97412x
+description: test
