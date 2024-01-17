@@ -1,0 +1,5 @@
+name: CiaraCore
+version: '1.0-SNAPSHOT'
+main: com.ciaracore.CiaraCore
+author: fatal97412x
+description: test

@@ -1,0 +1,48 @@
+guis:
+  main:
+    title: "Menu Principal"
+    size: 27
+    trigger: "command:/testgui"
+    back-enabled: false
+    items:
+      - slot: 11
+        material: DIAMOND_SWORD
+        title: "&aÉpée"
+        lore:
+          - "&7Cliquez pour obtenir une épée puissante."
+        action: "command:/give %player% diamond_sword"
+      - slot: 15
+        material: GOLDEN_APPLE
+        title: "&6Pomme dorée"
+        lore:
+          - "&7Cliquez pour obtenir une pomme dorée."
+        action: "command:/give %player% golden_apple"
+
+  special:
+    title: "GUI Spécial"
+    size: 18
+    view-permission: "gui.special.view"
+    use-command-permission: "gui.special.use"
+    back-enabled: true
+    back-item:
+      material: ARROW
+      title: "&cRetour"
+      lore:
+        - "&7Cliquez pour revenir au Menu Principal."
+    trigger: "item:DIAMOND_SWORD"
+
+    items:
+      - slot: 2
+        material: BARRIER
+        title: "&cRetour"
+        lore:
+          - "&7Cliquez pour revenir au Menu Principal."
+        action: "open:main"
+
+      - slot: 6
+        material: IRON_SWORD
+        title: "&7Épée en fer"
+        lore:
+          - "&7Cliquez pour obtenir une épée en fer."
+        action: "command:/give %player% iron_sword"
+

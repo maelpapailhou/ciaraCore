@@ -1,0 +1,16 @@
+- server: lobby
+  lines:
+    - text: "&aBienvenue sur le serveur lobby !"
+      hover: "&bCliquez ici pour voir les commandes disponibles."
+      action: "/help lobby"
+    - text: "&aRejoignez un autre serveur avec /server <nom>."
+      hover: "&bCliquez ici pour voir la liste des serveurs."
+      action: "/server list"
+- server: freecube
+  lines:
+    - text: "&aBienvenue sur le serveur freecube !"
+      hover: "&bCliquez ici pour voir les règles du serveur."
+      action: "/rules"
+    - text: "&aProtégez vos constructions avec /claim."
+      hover: "&bCliquez ici pour voir le tutoriel sur les claims."
+      action: "/claim help"
