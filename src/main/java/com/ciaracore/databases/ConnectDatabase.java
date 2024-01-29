@@ -24,7 +24,7 @@ public class ConnectDatabase {
             // Connexion à la base de données
             connectToDatabase(host, database, username, password, port);
         } else {
-            System.err.println("Erreur lors du chargement des propriétés de la base de données. Le plugin sera désactivé.");
+            System.err.println("ConnectDatabase: Erreur lors du chargement des propriétés de la base de données. Le plugin sera désactivé.");
         }
     }
 
@@ -33,12 +33,12 @@ public class ConnectDatabase {
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("config.properties")) {
             if (input != null) {
                 properties.load(input);
-                System.out.println("Propriétés de la base de données chargées avec succès.");
+                System.out.println("ConnectDatabase: Propriétés de la base de données chargées avec succès.");
             } else {
-                System.err.println("Désolé, impossible de trouver config.properties");
+                System.err.println("ConnectDatabase: Désolé, impossible de trouver config.properties");
             }
         } catch (Exception e) {
-            System.err.println("Erreur lors du chargement des propriétés. Erreur : " + e.getMessage());
+            System.err.println("ConnectDatabase: Erreur lors du chargement des propriétés. Erreur : " + e.getMessage());
             e.printStackTrace();
             return null;
         }
@@ -49,9 +49,9 @@ public class ConnectDatabase {
         try {
             // Connexion à la base de données MySQL
             connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, username, password);
-            System.out.println("Connecté à la base de données.");
+            System.out.println("ConnectDatabase: Connecté à la base de données.");
         } catch (SQLException e) {
-            System.err.println("Échec de la connexion à la base de données. Erreur : " + e.getMessage());
+            System.err.println("ConnectDatabase: Échec de la connexion à la base de données. Erreur : " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -69,10 +69,10 @@ public class ConnectDatabase {
             // Vérification de la connexion avant de se déconnecter
             if (isConnected()) {
                 connection.close();
-                System.out.println("Déconnecté de la base de données.");
+                System.out.println("ConnectDatabase: Déconnecté de la base de données.");
             }
         } catch (SQLException e) {
-            System.err.println("Erreur lors de la déconnexion de la base de données. Erreur : " + e.getMessage());
+            System.err.println("ConnectDatabase: Erreur lors de la déconnexion de la base de données. Erreur : " + e.getMessage());
             e.printStackTrace();
         }
     }

@@ -12,26 +12,40 @@ public class RankDatabase {
 
     public RankDatabase(Connection connection) {
         this.connection = connection;
+        System.out.println("RankDatabase: Constructeur appelé, connexion établie.");
     }
 
     public String getPlayerRank(UUID playerUUID) {
+        System.out.println("RankDatabase: getPlayerRank appelé pour UUID: " + playerUUID);
         String rank = null;
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT `RANK` FROM players WHERE UUID = ?");
             statement.setString(1, playerUUID.toString());
+            System.out.println("RankDatabase: Requête préparée exécutée.");
             rank = executeSingleStringQuery(statement);
         } catch (SQLException e) {
             handleSQLException(e);
+        }
+
+        if (rank != null) {
+            System.out.println("RankDatabase: Rang trouvé: " + rank);
+        } else {
+            System.out.println("RankDatabase: Aucun rang trouvé pour UUID: " + playerUUID);
         }
         return rank;
     }
 
     public void setPlayerRank(UUID playerUUID, String newRank) {
-        try (PreparedStatement statement = connection.prepareStatement(
-                "UPDATE players SET `RANK` = ? WHERE UUID = ?")) {
+        System.out.println("RankDatabase: setPlayerRank appelé pour UUID: " + playerUUID + ", Rang: " + newRank);
+        try (PreparedStatement statement = connection.prepareStatement("UPDATE players SET `RANK` = ? WHERE UUID = ?")) {
             statement.setString(1, newRank);
             statement.setString(2, playerUUID.toString());
-            statement.executeUpdate();
+            int affectedRows = statement.executeUpdate();
+            if (affectedRows > 0) {
+                System.out.println("RankDatabase: Mise à jour du rang réussie.");
+            } else {
+                System.out.println("RankDatabase: Aucune ligne affectée, mise à jour du rang échouée.");
+            }
         } catch (SQLException e) {
             handleSQLException(e);
         }
@@ -42,6 +56,9 @@ public class RankDatabase {
         try (ResultSet resultSet = statement.executeQuery()) {
             if (resultSet.next()) {
                 result = resultSet.getString(1);
+                System.out.println("RankDatabase: Résultat de la requête: " + result);
+            } else {
+                System.out.println("RankDatabase: Aucun résultat trouvé pour la requête.");
             }
         }
         return result;
