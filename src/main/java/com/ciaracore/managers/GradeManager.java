@@ -1,6 +1,6 @@
 package com.ciaracore.managers;
 
-import com.ciaracore.databases.players.GradeDatabase;
+import com.ciaracore.databases.GradeDatabase;
 
 import java.sql.SQLException;
 import java.util.HashMap;

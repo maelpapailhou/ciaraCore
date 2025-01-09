@@ -1,6 +1,4 @@
-package com.ciaracore.databases.players;
-
-import com.ciaracore.databases.ConnectDatabase;
+package com.ciaracore.databases;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

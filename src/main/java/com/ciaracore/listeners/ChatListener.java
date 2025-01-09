@@ -1,10 +1,12 @@
 package com.ciaracore.listeners;
 
-import com.ciaracore.databases.players.UUIDDatabase;
+import com.ciaracore.databases.UUIDDatabase;
 import com.ciaracore.managers.GradeManager;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.event.EventHandler;
 
 import java.util.UUID;
@@ -21,18 +23,29 @@ public class ChatListener implements Listener {
 
     @EventHandler
     public void onChat(ChatEvent event) {
-        if (!(event.getSender() instanceof ProxiedPlayer) || event.isCommand()) return;
+        // Vérifiez que l'expéditeur est un joueur et que ce n'est pas une commande
+        if (!(event.getSender() instanceof ProxiedPlayer) || event.isCommand()) {
+            return;
+        }
 
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();
         UUID uuid = player.getUniqueId();
+
+        // Récupérez le grade du joueur
         String gradeName = uuidDatabase.getPlayerGrade(uuid);
         GradeManager.Grade grade = gradeManager.getGrade(gradeName);
 
-        String prefix = (grade != null) ? grade.getFormattedPrefix() : "";
-        // Vous pouvez envoyer le message sur le chat si besoin,
-        // ici, il est simplement récupéré mais pas envoyé.
+        // Ajoutez le préfixe du grade (s'il existe)
+        String prefix = (grade != null) ? grade.getFormattedPrefix() : " ";
+
+        // Construisez le message formaté
+        String formattedMessage = ChatColor.translateAlternateColorCodes('&',
+                prefix + player.getName() + ChatColor.RESET + ": " + event.getMessage());
+
+        // Annulez l'envoi du message brut
         event.setCancelled(true);
-        String message = prefix + player.getName() + ": " + event.getMessage();
-        // Envoyez ce message où vous le souhaitez (ex: sur un canal de chat).
+
+        // Diffusez le message formaté à tous les joueurs connectés
+        ProxyServer.getInstance().getPlayers().forEach(p -> p.sendMessage(formattedMessage));
     }
 }

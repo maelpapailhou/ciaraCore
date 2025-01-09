@@ -1,6 +1,5 @@
-package com.ciaracore.databases.players;
+package com.ciaracore.databases;
 
-import com.ciaracore.databases.ConnectDatabase;
 import com.ciaracore.managers.GradeManager;
 
 import java.sql.Connection;

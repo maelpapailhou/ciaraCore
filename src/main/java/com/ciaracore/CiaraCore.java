@@ -1,11 +1,12 @@
 package com.ciaracore;
 
-import com.ciaracore.commands.IDCommand;
-import com.ciaracore.commands.GradeSetCommand;
+import com.ciaracore.commands.GradeCommand;
+import com.ciaracore.commands.LookupCommand;
 import com.ciaracore.databases.ConnectDatabase;
-import com.ciaracore.databases.players.GradeDatabase;
-import com.ciaracore.databases.players.UUIDDatabase;
+import com.ciaracore.databases.GradeDatabase;
+import com.ciaracore.databases.UUIDDatabase;
 import com.ciaracore.listeners.ChatListener;
+import com.ciaracore.listeners.MOTDListener;
 import com.ciaracore.listeners.PlayerJoinListener;
 import com.ciaracore.managers.GradeManager;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -53,14 +54,15 @@ public final class CiaraCore extends Plugin {
     }
 
     private void registerCommands() {
-        getProxy().getPluginManager().registerCommand(this, new GradeSetCommand(uuidDatabase, gradeManager));
-        getProxy().getPluginManager().registerCommand(this, new IDCommand(uuidDatabase, gradeManager));
+        getProxy().getPluginManager().registerCommand(this, new GradeCommand(uuidDatabase, gradeManager));
+        getProxy().getPluginManager().registerCommand(this, new LookupCommand(uuidDatabase, gradeManager));
         getLogger().info("[CiaraCore] Commandes enregistrées.");
     }
 
     private void registerListeners() {
         getProxy().getPluginManager().registerListener(this, new PlayerJoinListener(uuidDatabase));
         getProxy().getPluginManager().registerListener(this, new ChatListener(uuidDatabase, gradeManager));
+        getProxy().getPluginManager().registerListener(this, new MOTDListener()); // Ajout ici
         getLogger().info("[CiaraCore] Écouteurs enregistrés.");
     }
 

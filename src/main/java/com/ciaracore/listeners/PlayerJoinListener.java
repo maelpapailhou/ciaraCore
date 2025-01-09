@@ -1,6 +1,6 @@
 package com.ciaracore.listeners;
 
-import com.ciaracore.databases.players.UUIDDatabase;
+import com.ciaracore.databases.UUIDDatabase;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
