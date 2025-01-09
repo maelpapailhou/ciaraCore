@@ -1,6 +1,7 @@
 package com.ciaracore;
 
 import com.ciaracore.commands.GradeCommand;
+import com.ciaracore.commands.LanguageCommand;
 import com.ciaracore.commands.LookupCommand;
 import com.ciaracore.databases.ConnectDatabase;
 import com.ciaracore.databases.GradeDatabase;
@@ -54,6 +55,7 @@ public final class CiaraCore extends Plugin {
     }
 
     private void registerCommands() {
+        getProxy().getPluginManager().registerCommand(this, new LanguageCommand(uuidDatabase));
         getProxy().getPluginManager().registerCommand(this, new GradeCommand(uuidDatabase, gradeManager));
         getProxy().getPluginManager().registerCommand(this, new LookupCommand(uuidDatabase, gradeManager));
         getLogger().info("[CiaraCore] Commandes enregistrées.");

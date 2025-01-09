@@ -137,4 +137,16 @@ public class UUIDDatabase {
             System.err.println("[UUIDDatabase] Erreur lors de la mise à jour du grade du joueur : " + e.getMessage());
         }
     }
+
+    public void setPlayerLanguage(UUID uuid, String language) throws SQLException {
+        String query = "INSERT INTO players_options (UUID, LANGUAGE) VALUES (?, ?) " +
+                "ON DUPLICATE KEY UPDATE LANGUAGE = VALUES(LANGUAGE)";
+        try (Connection connection = connectDatabase.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, uuid.toString());
+            statement.setString(2, language);
+            statement.executeUpdate();
+        }
+    }
+
 }

@@ -8,6 +8,7 @@ com/ciaracore/managers/GradeManager.class
 com/ciaracore/commands/LookupCommand.class
 com/ciaracore/commands/PluginCommand.class
 com/ciaracore/databases/UUIDDatabase.class
+com/ciaracore/commands/LanguageCommand.class
 com/ciaracore/commands/LobbyCommand.class
 com/ciaracore/databases/GradeDatabase.class
 com/ciaracore/managers/GradeManager$Grade.class
