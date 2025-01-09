@@ -1,42 +1,43 @@
 package com.ciaracore.commands;
 
-import com.ciaracore.databases.UUIDDatabase;
-import com.ciaracore.managers.RankManager;
+import com.ciaracore.databases.players.UUIDDatabase;
+import com.ciaracore.managers.GradeManager;
+import com.ciaracore.managers.GradeManager.Grade;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
-import net.md_5.bungee.protocol.packet.Chat;
 
 import java.util.UUID;
 
+/**
+ * Commande /id qui affiche l’UUID et le grade d’un joueur.
+ */
 public class IDCommand extends Command {
 
     private final UUIDDatabase uuidDatabase;
-    private final RankManager rankManager;
+    private final GradeManager gradeManager;
 
-    public IDCommand(UUIDDatabase uuidDatabase, RankManager rankManager) {
+    public IDCommand(UUIDDatabase uuidDatabase, GradeManager gradeManager) {
         super("id");
         this.uuidDatabase = uuidDatabase;
-        this.rankManager = rankManager;
+        this.gradeManager = gradeManager;
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (uuidDatabase == null || rankManager == null) {
-            sender.sendMessage(ChatColor.RED + "Erreur : La base de données ou le gestionnaire de rangs n'est pas initialisé.");
+        if (uuidDatabase == null || gradeManager == null) {
+            sender.sendMessage(new TextComponent(ChatColor.RED + "Erreur : La base de données ou le gestionnaire de grades n'est pas initialisé."));
             return;
         }
 
         if (args.length == 0) {
             if (sender instanceof ProxiedPlayer) {
                 ProxiedPlayer player = (ProxiedPlayer) sender;
-                displayPlayerInfo(player, player.getUniqueId());
+                displayPlayerInfo(sender, player.getUniqueId());
             } else {
-                sender.sendMessage(ChatColor.YELLOW + "Veuillez spécifier un nom de joueur.");
+                sender.sendMessage(new TextComponent(ChatColor.YELLOW + "Veuillez spécifier un nom de joueur."));
             }
         } else if (args.length == 1) {
             String playerName = args[0];
@@ -44,43 +45,42 @@ public class IDCommand extends Command {
             if (playerUUID != null) {
                 displayPlayerInfo(sender, playerUUID);
             } else {
-                sender.sendMessage(ChatColor.RED + "Joueur non trouvé : " + playerName);
+                sender.sendMessage(new TextComponent(ChatColor.RED + "Joueur non trouvé : " + playerName));
             }
         } else {
-            sender.sendMessage(ChatColor.YELLOW + "Utilisation : /id [joueur]");
+            sender.sendMessage(new TextComponent(ChatColor.YELLOW + "Utilisation : /id [joueur]"));
         }
     }
 
+    /**
+     * Affiche les informations (UUID, nom, grade) d’un joueur au CommandSender.
+     */
     private void displayPlayerInfo(CommandSender sender, UUID playerUUID) {
         String playerName = uuidDatabase.getPlayerName(playerUUID);
-        String playerRankName = uuidDatabase.getPlayerRank(playerUUID); // Nom exact du rang dans la base de données
-        RankManager.Rank playerRank = rankManager.getRank(playerRankName);
+        String playerGradeName = uuidDatabase.getPlayerGrade(playerUUID);
+        Grade grade = gradeManager.getGrade(playerGradeName);
 
-        // Convertir le préfixe du format YAML en format ChatColor
-        String rankPrefix = playerRank != null ? ChatColor.translateAlternateColorCodes('&', playerRank.getPrefix()) : "Inconnu";
+        String gradePrefix = (grade != null) ? grade.getFormattedPrefix() : "Inconnu";
 
-        int playerCoins = uuidDatabase.getPlayerCoins(playerUUID); // Assurez-vous que cette méthode existe
-
-        sender.sendMessage(ChatColor.GOLD + "" + ChatColor.STRIKETHROUGH + "                    " +
+        TextComponent header = new TextComponent(ChatColor.GOLD + "" + ChatColor.STRIKETHROUGH + "                    " +
                 ChatColor.RESET + "" + ChatColor.GOLD + " ID " +
                 ChatColor.STRIKETHROUGH + "                    ");
-        sender.sendMessage(new ComponentBuilder("UUID: ")
-                .color(ChatColor.GRAY)
-                .append(playerUUID.toString())
-                .color(ChatColor.WHITE)
-                .italic(true)
-                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Cliquez pour copier").color(ChatColor.YELLOW).create()))
-                .event(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, playerUUID.toString()))
-                .create());
-        sender.sendMessage(ChatColor.GRAY + "Username: " + ChatColor.WHITE + playerName);
+        sender.sendMessage(header);
 
-        // Afficher le rang avec le préfixe et le nom exact du rang
-        sender.sendMessage(new ComponentBuilder(ChatColor.GRAY + "Rank: ")
-                .append(rankPrefix + ChatColor.GRAY + " (" + playerRankName + ")")
-                .create());
+        TextComponent uuidComponent = new TextComponent("UUID: " + playerUUID.toString());
+        uuidComponent.setColor(ChatColor.GRAY);
+        uuidComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                new ComponentBuilder("Cliquez pour copier").color(ChatColor.YELLOW).create()));
+        uuidComponent.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, playerUUID.toString()));
+        sender.sendMessage(uuidComponent);
 
-        sender.sendMessage(ChatColor.GRAY + "Coins: " + ChatColor.GREEN + playerCoins);
-        sender.sendMessage(ChatColor.GOLD + "" + ChatColor.STRIKETHROUGH + "                    " + "    " + "                    ");
+        TextComponent usernameComponent = new TextComponent(ChatColor.GRAY + "Username: " + ChatColor.WHITE + playerName);
+        sender.sendMessage(usernameComponent);
+
+        TextComponent gradeComponent = new TextComponent(ChatColor.GRAY + "Grade: " + gradePrefix + ChatColor.GRAY + " (" + playerGradeName + ")");
+        sender.sendMessage(gradeComponent);
+
+        TextComponent footer = new TextComponent(ChatColor.GOLD + "" + ChatColor.STRIKETHROUGH + "                    " + "    " + "                    ");
+        sender.sendMessage(footer);
     }
-
 }

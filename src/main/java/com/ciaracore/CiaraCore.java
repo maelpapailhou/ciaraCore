@@ -1,100 +1,94 @@
 package com.ciaracore;
 
-import com.ciaracore.commands.LobbyCommand;
 import com.ciaracore.commands.IDCommand;
-import com.ciaracore.commands.RankSetCommand;
+import com.ciaracore.commands.GradeSetCommand;
 import com.ciaracore.databases.ConnectDatabase;
-import com.ciaracore.databases.RankDatabase;
-import com.ciaracore.databases.UUIDDatabase;
-import com.ciaracore.databases.UsernameDatabase;
+import com.ciaracore.databases.players.GradeDatabase;
+import com.ciaracore.databases.players.UUIDDatabase;
 import com.ciaracore.listeners.ChatListener;
-import com.ciaracore.listeners.MOTDListener;
 import com.ciaracore.listeners.PlayerJoinListener;
-import com.ciaracore.managers.RankManager;
-import net.md_5.bungee.api.plugin.Listener;
+import com.ciaracore.managers.GradeManager;
 import net.md_5.bungee.api.plugin.Plugin;
 
-import java.io.InputStream;
-import java.sql.Connection;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-public final class CiaraCore extends Plugin implements Listener {
+public final class CiaraCore extends Plugin {
 
     private ConnectDatabase connectDatabase;
     private UUIDDatabase uuidDatabase;
-    private RankDatabase rankDatabase;
-    private UsernameDatabase usernameDatabase;
-    private RankManager rankManager;
+    private GradeManager gradeManager;
+    private ScheduledExecutorService databaseMonitor;
 
     @Override
     public void onEnable() {
-        getLogger().info("Démarrage du plugin CiaraCore...");
+        getLogger().info("[CiaraCore] Démarrage du plugin...");
 
-        // Chargement du fichier de configuration ranks.yml depuis les ressources
-        InputStream configFile = getResourceAsStream("ranks.yml");
-        if (configFile == null) {
-            getLogger().severe("Impossible de trouver ranks.yml dans les ressources.");
-            disablePlugin();
-            return;
-        }
-        getLogger().info("Le fichier de configuration ranks.yml a été chargé avec succès.");
-
-        // Initialisation du gestionnaire de rangs
-        rankManager = new RankManager(configFile);
-        getLogger().info("Gestionnaire de rangs initialisé.");
-
-        // Connexion à la base de données
+        // Initialisation de la base de données
         connectDatabase = new ConnectDatabase();
-        if (!connectDatabase.isConnected()) {
-            getLogger().severe("Impossible de se connecter à la base de données. Le plugin sera désactivé.");
-            disablePlugin();
+
+        if (connectDatabase == null || !connectDatabase.isConnected()) {
+            getLogger().severe("[CiaraCore] Impossible de se connecter à la base de données. Arrêt du plugin...");
             return;
         }
-        getLogger().info("Connexion à la base de données réussie.");
 
-        Connection connection = connectDatabase.getConnection();
+        // Initialisation des bases de données et gestionnaires
+        uuidDatabase = new UUIDDatabase(connectDatabase);
+        GradeDatabase gradeDatabase = new GradeDatabase(connectDatabase);
+        gradeManager = new GradeManager(gradeDatabase);
 
-        // Initialisation des bases de données
-        rankDatabase = new RankDatabase(connection);
-        uuidDatabase = new UUIDDatabase(connection);
-        usernameDatabase = new UsernameDatabase(connection);
-        getLogger().info("Bases de données initialisées.");
+        getLogger().info("[CiaraCore] Base de données initialisée et gestionnaires configurés.");
 
-        // Enregistrement des commandes et des écouteurs
+        // Enregistrement des commandes
         registerCommands();
+
+        // Enregistrement des écouteurs
         registerListeners();
 
-        // Enregistrement des écouteurs spécifiques
-        getProxy().getPluginManager().registerListener(this, new ChatListener(uuidDatabase, rankManager));
-        getLogger().info("Écouteurs enregistrés.");
+        // Démarrer un moniteur périodique pour surveiller la base de données
+        startDatabaseMonitor();
 
-        getLogger().info("CiaraCore activé avec succès.");
+        getLogger().info("[CiaraCore] Plugin activé avec succès.");
     }
 
     private void registerCommands() {
-        getProxy().getPluginManager().registerCommand(this, new LobbyCommand());
-        getProxy().getPluginManager().registerCommand(this, new RankSetCommand(uuidDatabase, rankManager));
-        getProxy().getPluginManager().registerCommand(this, new IDCommand(uuidDatabase, rankManager));
-        getLogger().info("Commandes enregistrées.");
+        getProxy().getPluginManager().registerCommand(this, new GradeSetCommand(uuidDatabase, gradeManager));
+        getProxy().getPluginManager().registerCommand(this, new IDCommand(uuidDatabase, gradeManager));
+        getLogger().info("[CiaraCore] Commandes enregistrées.");
     }
 
     private void registerListeners() {
-        getProxy().getPluginManager().registerListener(this, new MOTDListener());
         getProxy().getPluginManager().registerListener(this, new PlayerJoinListener(uuidDatabase));
-        getLogger().info("Écouteurs enregistrés.");
+        getProxy().getPluginManager().registerListener(this, new ChatListener(uuidDatabase, gradeManager));
+        getLogger().info("[CiaraCore] Écouteurs enregistrés.");
     }
 
-    private void disablePlugin() {
-        getProxy().getPluginManager().unregisterListeners(this);
-        getProxy().getPluginManager().unregisterCommands(this);
+    private void startDatabaseMonitor() {
+        databaseMonitor = Executors.newSingleThreadScheduledExecutor();
+        databaseMonitor.scheduleAtFixedRate(() -> {
+            if (!connectDatabase.isConnected()) {
+                getLogger().warning("[CiaraCore] Perte de connexion avec la base de données, tentative de reconnexion...");
+                connectDatabase.disconnect(); // Assurez-vous de nettoyer l'ancienne connexion
+                connectDatabase = new ConnectDatabase(); // Réinitialisez la connexion
+                if (connectDatabase.isConnected()) {
+                    getLogger().info("[CiaraCore] Reconnexion à la base de données réussie.");
+                } else {
+                    getLogger().severe("[CiaraCore] Impossible de se reconnecter à la base de données.");
+                }
+            }
+        }, 0, 1, TimeUnit.MINUTES); // Vérification toutes les minutes
     }
 
     @Override
     public void onDisable() {
-        getLogger().info("Arrêt du plugin CiaraCore...");
-        if (connectDatabase != null) {
-            connectDatabase.disconnectFromDatabase();
-            getLogger().info("Déconnecté de la base de données.");
+        if (databaseMonitor != null && !databaseMonitor.isShutdown()) {
+            databaseMonitor.shutdown();
         }
-        getLogger().info("CiaraCore désactivé.");
+
+        if (connectDatabase != null) {
+            connectDatabase.disconnect();
+        }
+        getLogger().info("[CiaraCore] Plugin désactivé.");
     }
 }

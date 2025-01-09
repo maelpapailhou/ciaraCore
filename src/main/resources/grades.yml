@@ -1,0 +1,34 @@
+joueur:
+  permissions:
+    - bungeecord.command.server
+    - ciaracore.lang
+
+modo:
+  permissions:
+    - bungeecord.command.server
+    - ciaracore.lang
+
+admin:
+  permissions:
+    - bungeecord.command.server
+    - ciaracore.lang
+
+owner:
+  permissions:
+    - bungeecord.command.list
+    - ciaracore.lang
+    - bungeecord.command.alert
+    - bungeecord.command.end
+    - bungeecord.command.ip
+    - bungeecord.command.reload
+    - bungeecord.command.kick
+    - ciaracore.command.rankset
+    - bukkit.command.version
+    - bukkit.command.plugins
+    - bukkit.command.help
+    - bukkit.command.reload
+    - bukkit.command.timings
+    - minecraft.command.advancement
+    - minecraft.command.ban
+    - minecraft.command.ban-ip
+    - minecraft.command.banlis

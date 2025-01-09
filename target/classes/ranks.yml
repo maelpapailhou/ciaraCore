@@ -1,12 +1,22 @@
-guest:
+joueur:
   name: "Joueur"
   prefix: "&7Joueur"
   permissions:
     - bungeecord.command.server
 
+modo:
+  name: "Modérateur"
+  prefix: "&cModérateur"
+  permissions:
+    - bungeecord.command.server
+
+admin:
+  name: "Admin"
+  prefix: "&4Adminr"
+
 owner:
   name: "Fondateur"
-  prefix: "&4Admin"
+  prefix: "&4Fondateur"
   permissions:
     - bungeecord.command.list
     - bungeecord.command.alert

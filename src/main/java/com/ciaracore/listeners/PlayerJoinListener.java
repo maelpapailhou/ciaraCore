@@ -1,7 +1,6 @@
 package com.ciaracore.listeners;
 
-import com.ciaracore.databases.UUIDDatabase;
-import net.md_5.bungee.api.connection.PendingConnection;
+import com.ciaracore.databases.players.UUIDDatabase;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -10,7 +9,7 @@ import java.util.UUID;
 
 public class PlayerJoinListener implements Listener {
 
-    private UUIDDatabase uuidDatabase;
+    private final UUIDDatabase uuidDatabase;
 
     public PlayerJoinListener(UUIDDatabase uuidDatabase) {
         this.uuidDatabase = uuidDatabase;
@@ -18,16 +17,8 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerLogin(LoginEvent event) {
-        PendingConnection connection = event.getConnection();
-        UUID uuid = connection.getUniqueId();
-        String username = connection.getName();
-
-        if (!uuidDatabase.playerExists(uuid)) {
-            // Si le joueur n'existe pas dans la base de données, le créer
-            uuidDatabase.loadPlayer(uuid, username);
-        } else {
-            // Vérifier si les informations du joueur sont à jour
-            uuidDatabase.loadPlayer(uuid, username);
-        }
+        UUID uuid = event.getConnection().getUniqueId();
+        String username = event.getConnection().getName();
+        uuidDatabase.loadPlayer(uuid, username);
     }
 }
