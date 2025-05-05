@@ -80,15 +80,14 @@ public class LookupCommand extends Command {
 
         // En-tête avec style
         String header = ChatColor.GOLD + "                 " + ChatColor.MAGIC + "||" +
-                ChatColor.RESET + "" + ChatColor.AQUA + "" + ChatColor.BOLD + " LOOKUP"
+                ChatColor.RESET + "" + ChatColor.AQUA + "" + ChatColor.BOLD + "  LOOKUP  "
                 + "" + ChatColor.RESET + ""
                 + ChatColor.GOLD + "" + ChatColor.MAGIC + "||";
         ;
         sender.sendMessage(new TextComponent(header));
-        sender.sendMessage(new TextComponent(""));
 
         // UUID avec interaction
-        TextComponent uuidComponent = new TextComponent(ChatColor.GRAY + "UUID: ");
+        TextComponent uuidComponent = new TextComponent(ChatColor.YELLOW + "UUID" + ChatColor.GRAY + ": ");
         TextComponent uuidValue = new TextComponent(ChatColor.AQUA + playerUUID.toString());
         uuidValue.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Cliquez pour copier").color(ChatColor.GREEN).create()));
         uuidValue.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, playerUUID.toString()));
@@ -96,11 +95,11 @@ public class LookupCommand extends Command {
         sender.sendMessage(uuidComponent);
 
         // Pseudo
-        TextComponent usernameComponent = new TextComponent(ChatColor.GRAY + "Pseudo: " + ChatColor.AQUA + playerName);
+        TextComponent usernameComponent = new TextComponent(ChatColor.YELLOW + "Pseudo" + ChatColor.GRAY + ": " + ChatColor.AQUA + playerName);
         sender.sendMessage(usernameComponent);
 
         // Grade
-        TextComponent gradeComponent = new TextComponent(ChatColor.GRAY + "Grade: ");
+        TextComponent gradeComponent = new TextComponent(ChatColor.YELLOW + "Grade" + ChatColor.GRAY + ": ");
         gradeComponent.addExtra(new TextComponent(gradePrefix));
         sender.sendMessage(gradeComponent);
 

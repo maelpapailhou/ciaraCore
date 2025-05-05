@@ -36,11 +36,11 @@ public class ChatListener implements Listener {
         GradeManager.Grade grade = gradeManager.getGrade(gradeName);
 
         // Ajoutez le préfixe du grade (s'il existe)
-        String prefix = (grade != null) ? grade.getFormattedPrefix() : " ";
+        String prefix = (grade != null) ? grade.getFormattedPrefix() : "";
 
         // Construisez le message formaté
         String formattedMessage = ChatColor.translateAlternateColorCodes('&',
-                prefix + player.getName() + ChatColor.RESET + ": " + event.getMessage());
+                prefix + " " + player.getName() + ChatColor.GRAY + ": " + ChatColor.WHITE + event.getMessage());
 
         // Annulez l'envoi du message brut
         event.setCancelled(true);
