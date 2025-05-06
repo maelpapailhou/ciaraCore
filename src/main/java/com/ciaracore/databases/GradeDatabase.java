@@ -1,6 +1,6 @@
 package com.ciaracore.databases;
 
-import com.ciaracore.managers.GradeManager;
+import com.ciaracore.managers.RankManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -25,8 +25,8 @@ public class GradeDatabase {
      * @return Liste des grades sous forme d'objets Grade
      * @throws SQLException En cas d'erreur SQL
      */
-    public List<GradeManager.Grade> fetchAllGrades() throws SQLException {
-        List<GradeManager.Grade> grades = new ArrayList<>();
+    public List<RankManager.Grade> fetchAllGrades() throws SQLException {
+        List<RankManager.Grade> grades = new ArrayList<>();
         // On sélectionne GRADE et PREFIX (et non NAME, pour correspondre à ta table)
         String query = "SELECT GRADE, PREFIX FROM grades";
 
@@ -38,7 +38,7 @@ public class GradeDatabase {
                 // Récupération du nom du grade dans la colonne "GRADE"
                 String gradeName = resultSet.getString("GRADE");
                 String prefix = resultSet.getString("PREFIX");
-                grades.add(new GradeManager.Grade(gradeName, prefix));
+                grades.add(new RankManager.Grade(gradeName, prefix));
             }
         }
 

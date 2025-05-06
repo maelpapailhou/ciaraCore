@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GradeManager {
+public class RankManager {
     private final Map<String, Grade> gradeMap = new HashMap<>();
     private final GradeDatabase gradeDatabase;
 
-    public GradeManager(GradeDatabase gradeDatabase) {
+    public RankManager(GradeDatabase gradeDatabase) {
         this.gradeDatabase = gradeDatabase;
         loadGrades();
     }

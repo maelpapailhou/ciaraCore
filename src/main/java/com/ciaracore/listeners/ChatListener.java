@@ -1,7 +1,7 @@
 package com.ciaracore.listeners;
 
 import com.ciaracore.databases.UUIDDatabase;
-import com.ciaracore.managers.GradeManager;
+import com.ciaracore.managers.RankManager;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -14,11 +14,11 @@ import java.util.UUID;
 public class ChatListener implements Listener {
 
     private final UUIDDatabase uuidDatabase;
-    private final GradeManager gradeManager;
+    private final RankManager rankManager;
 
-    public ChatListener(UUIDDatabase uuidDatabase, GradeManager gradeManager) {
+    public ChatListener(UUIDDatabase uuidDatabase, RankManager rankManager) {
         this.uuidDatabase = uuidDatabase;
-        this.gradeManager = gradeManager;
+        this.rankManager = rankManager;
     }
 
     @EventHandler
@@ -33,7 +33,7 @@ public class ChatListener implements Listener {
 
         // Récupérez le grade du joueur
         String gradeName = uuidDatabase.getPlayerGrade(uuid);
-        GradeManager.Grade grade = gradeManager.getGrade(gradeName);
+        RankManager.Grade grade = rankManager.getGrade(gradeName);
 
         // Ajoutez le préfixe du grade (s'il existe)
         String prefix = (grade != null) ? grade.getFormattedPrefix() : "";

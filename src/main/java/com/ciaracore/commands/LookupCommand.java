@@ -1,8 +1,8 @@
 package com.ciaracore.commands;
 
 import com.ciaracore.databases.UUIDDatabase;
-import com.ciaracore.managers.GradeManager;
-import com.ciaracore.managers.GradeManager.Grade;
+import com.ciaracore.managers.RankManager;
+import com.ciaracore.managers.RankManager.Grade;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.*;
@@ -17,17 +17,17 @@ import java.util.UUID;
 public class LookupCommand extends Command {
 
     private final UUIDDatabase uuidDatabase;
-    private final GradeManager gradeManager;
+    private final RankManager rankManager;
 
-    public LookupCommand(UUIDDatabase uuidDatabase, GradeManager gradeManager) {
+    public LookupCommand(UUIDDatabase uuidDatabase, RankManager rankManager) {
         super("lookup");
         this.uuidDatabase = uuidDatabase;
-        this.gradeManager = gradeManager;
+        this.rankManager = rankManager;
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (uuidDatabase == null || gradeManager == null) {
+        if (uuidDatabase == null || rankManager == null) {
             sender.sendMessage(new TextComponent(ChatColor.RED + "Erreur : La base de données ou le gestionnaire de grades n'est pas initialisé."));
             return;
         }
@@ -74,7 +74,7 @@ public class LookupCommand extends Command {
     private void displayPlayerInfo(CommandSender sender, UUID playerUUID) {
         String playerName = uuidDatabase.getPlayerName(playerUUID);
         String playerGradeName = uuidDatabase.getPlayerGrade(playerUUID);
-        Grade grade = gradeManager.getGrade(playerGradeName);
+        Grade grade = rankManager.getGrade(playerGradeName);
 
         String gradePrefix = (grade != null) ? grade.getFormattedPrefix() : ChatColor.RED + "Inconnu";
 

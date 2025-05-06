@@ -1,7 +1,6 @@
 package com.ciaracore.commands;
 
 import com.ciaracore.databases.UUIDDatabase;
-import com.ciaracore.managers.GradeManager;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -9,40 +8,42 @@ import net.md_5.bungee.api.plugin.Command;
 
 import java.util.UUID;
 
-public class GradeCommand extends Command {
+public class RankCommand extends Command {
 
     private final UUIDDatabase uuidDatabase;
-    private final GradeManager gradeManager;
 
-    public GradeCommand(UUIDDatabase uuidDatabase, GradeManager gradeManager) {
-        super("grade", "ciaracore.grade");
+    public RankCommand(UUIDDatabase uuidDatabase) {
+        super("grade", "ciaracore.grade"); // Command name "/grade", permission "ciaracore.grade"
         this.uuidDatabase = uuidDatabase;
-        this.gradeManager = gradeManager;
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        String language = "fr"; // Langue par défaut
+        // Default language is French
+        String language = "fr";
+
+        // Check if sender is a player and get the language preference
         if (sender instanceof ProxiedPlayer) {
             ProxiedPlayer player = (ProxiedPlayer) sender;
-            language = uuidDatabase.getPlayerOption(player.getUniqueId(), "LANGUAGE"); // Assurez-vous que cette méthode existe
+            language = uuidDatabase.getPlayerOption(player.getUniqueId(), "LANGUAGE");
             if (language == null) {
-                language = "fr"; // Fallback au cas où la langue n'est pas définie
+                language = "fr"; // Fallback language if none is set
             }
         }
 
-        if (args.length < 1) {
+        // If arguments are insufficient, send the usage message
+        if (args.length < 3) {
             sender.sendMessage(getMessage(language, "usage"));
             return;
         }
 
+        // Handle sub-commands
         String subCommand = args[0].toLowerCase();
 
         switch (subCommand) {
             case "set":
                 handleSetGrade(sender, args, language);
                 break;
-
             default:
                 sender.sendMessage(getMessage(language, "unknown_command"));
                 break;
@@ -58,24 +59,27 @@ public class GradeCommand extends Command {
         String playerName = args[1];
         String gradeName = args[2];
 
+        // Get player's UUID from the database
         UUID playerUUID = uuidDatabase.getPlayerUUID(playerName);
         if (playerUUID == null) {
             sender.sendMessage(getMessage(language, "player_not_found"));
             return;
         }
 
+        // Ensure sender has permission to set grades
         if (sender instanceof ProxiedPlayer && !sender.hasPermission("ciaracore.grade.set")) {
             sender.sendMessage(getMessage(language, "no_permission"));
             return;
         }
 
+        // Update the player's grade in the database
         uuidDatabase.setPlayerGrade(playerUUID, gradeName);
+
+        // Send confirmation message
         sender.sendMessage(getMessage(language, "grade_set", playerName, gradeName));
     }
 
     private String getMessage(String language, String key, Object... args) {
-        // Simule le chargement des messages pour la langue donnée
-        // Remplacez cela par un gestionnaire de langues réel (ex. LanguageManager)
         String message;
         switch (language) {
             case "fr":
@@ -89,14 +93,14 @@ public class GradeCommand extends Command {
                 break;
         }
 
-        // Remplace les variables {0}, {1}, etc. par les valeurs fournies
+        // Replace placeholders in the message
         if (args != null && args.length > 0) {
             for (int i = 0; i < args.length; i++) {
                 message = message.replace("{" + i + "}", args[i].toString());
             }
         }
 
-        // Gère les codes de couleur BungeeCord
+        // Translate BungeeCord color codes and return
         return ChatColor.translateAlternateColorCodes('&', message).replace("\\n", "\n");
     }
 

@@ -7,17 +7,19 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 public class UUIDDatabase {
+
     private final ConnectDatabase connectDatabase;
 
+    // Constructor to initialize UUIDDatabase with the connection
     public UUIDDatabase(ConnectDatabase connectDatabase) {
         this.connectDatabase = connectDatabase;
     }
 
     /**
-     * Récupère une option spécifique pour un joueur dans la table players_options.
-     * @param uuid UUID du joueur
-     * @param optionName Nom de l'option (colonne dans la table)
-     * @return Valeur de l'option, ou null si non définie
+     * Retrieves a specific option for a player from the players_options table.
+     * @param uuid UUID of the player
+     * @param optionName Name of the option (column in the table)
+     * @return Value of the option, or null if not defined
      */
     public String getPlayerOption(UUID uuid, String optionName) {
         String query = "SELECT " + optionName + " FROM players_options WHERE UUID = ?";
@@ -30,16 +32,16 @@ public class UUIDDatabase {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("[UUIDDatabase] Erreur lors de la récupération de l'option " + optionName + " : " + e.getMessage());
+            System.err.println("[UUIDDatabase] Error while retrieving option " + optionName + ": " + e.getMessage());
         }
         return null;
     }
 
     /**
-     * Définit une option spécifique pour un joueur dans la table players_options.
-     * @param uuid UUID du joueur
-     * @param optionName Nom de l'option (colonne dans la table)
-     * @param optionValue Valeur de l'option à définir
+     * Sets a specific option for a player in the players_options table.
+     * @param uuid UUID of the player
+     * @param optionName Name of the option (column in the table)
+     * @param optionValue Value of the option to set
      */
     public void setPlayerOption(UUID uuid, String optionName, String optionValue) {
         String query = "INSERT INTO players_options (UUID, " + optionName + ") VALUES (?, ?) " +
@@ -50,15 +52,14 @@ public class UUIDDatabase {
             pstmt.setString(2, optionValue);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("[UUIDDatabase] Erreur lors de la mise à jour de l'option " + optionName + " : " + e.getMessage());
+            System.err.println("[UUIDDatabase] Error while updating option " + optionName + ": " + e.getMessage());
         }
     }
 
-
     /**
-     * Vérifie si un joueur existe dans la base de données.
-     * @param uuid UUID du joueur
-     * @return true si le joueur existe, false sinon
+     * Checks if a player exists in the database.
+     * @param uuid UUID of the player
+     * @return true if the player exists, false otherwise
      */
     public boolean playerExists(UUID uuid) {
         String query = "SELECT COUNT(*) FROM players WHERE UUID = ?";
@@ -69,15 +70,15 @@ public class UUIDDatabase {
                 return rs.next() && rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
-            System.err.println("[UUIDDatabase] Erreur lors de la vérification de l'existence du joueur : " + e.getMessage());
+            System.err.println("[UUIDDatabase] Error while checking if player exists: " + e.getMessage());
             return false;
         }
     }
 
     /**
-     * Charge un joueur dans la base de données s'il n'existe pas.
-     * @param uuid UUID du joueur
-     * @param username Nom du joueur
+     * Loads a player into the database if they do not exist.
+     * @param uuid UUID of the player
+     * @param username Username of the player
      */
     public void loadPlayer(UUID uuid, String username) {
         if (!playerExists(uuid)) {
@@ -88,15 +89,15 @@ public class UUIDDatabase {
                 pstmt.setString(2, username);
                 pstmt.executeUpdate();
             } catch (SQLException e) {
-                System.err.println("[UUIDDatabase] Erreur lors de l'ajout du joueur : " + e.getMessage());
+                System.err.println("[UUIDDatabase] Error while adding player: " + e.getMessage());
             }
         }
     }
 
     /**
-     * Récupère le grade d’un joueur à partir de son UUID.
-     * @param uuid UUID du joueur
-     * @return Nom du grade, ou null si introuvable
+     * Retrieves the grade of a player by their UUID.
+     * @param uuid UUID of the player
+     * @return Grade of the player, or null if not found
      */
     public String getPlayerGrade(UUID uuid) {
         String query = "SELECT GRADE FROM players WHERE UUID = ?";
@@ -109,15 +110,15 @@ public class UUIDDatabase {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("[UUIDDatabase] Erreur lors de la récupération du grade du joueur : " + e.getMessage());
+            System.err.println("[UUIDDatabase] Error while retrieving player's grade: " + e.getMessage());
         }
         return null;
     }
 
     /**
-     * Récupère le grade d’un joueur à partir de son nom.
-     * @param playerName Nom du joueur
-     * @return Nom du grade, ou null si introuvable
+     * Retrieves the grade of a player by their name.
+     * @param playerName Name of the player
+     * @return Grade of the player, or null if not found
      */
     public String getPlayerGrade(String playerName) {
         UUID uuid = getPlayerUUID(playerName);
@@ -125,9 +126,9 @@ public class UUIDDatabase {
     }
 
     /**
-     * Récupère l'UUID d’un joueur à partir de son nom.
-     * @param playerName Nom du joueur
-     * @return UUID du joueur, ou null si introuvable
+     * Retrieves the UUID of a player by their name.
+     * @param playerName Name of the player
+     * @return UUID of the player, or null if not found
      */
     public UUID getPlayerUUID(String playerName) {
         String query = "SELECT UUID FROM players WHERE USERNAME = ?";
@@ -140,15 +141,15 @@ public class UUIDDatabase {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("[UUIDDatabase] Erreur lors de la récupération de l'UUID du joueur : " + e.getMessage());
+            System.err.println("[UUIDDatabase] Error while retrieving player's UUID: " + e.getMessage());
         }
         return null;
     }
 
     /**
-     * Récupère le nom d’un joueur à partir de son UUID.
-     * @param uuid UUID du joueur
-     * @return Nom du joueur, ou null si introuvable
+     * Retrieves the name of a player by their UUID.
+     * @param uuid UUID of the player
+     * @return Name of the player, or null if not found
      */
     public String getPlayerName(UUID uuid) {
         String query = "SELECT USERNAME FROM players WHERE UUID = ?";
@@ -161,15 +162,15 @@ public class UUIDDatabase {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("[UUIDDatabase] Erreur lors de la récupération du nom du joueur : " + e.getMessage());
+            System.err.println("[UUIDDatabase] Error while retrieving player's name: " + e.getMessage());
         }
         return null;
     }
 
     /**
-     * Définit le grade d’un joueur.
-     * @param uuid UUID du joueur
-     * @param gradeName Nom du grade
+     * Sets the grade of a player.
+     * @param uuid UUID of the player
+     * @param gradeName Name of the grade
      */
     public void setPlayerGrade(UUID uuid, String gradeName) {
         String query = "UPDATE players SET GRADE = ? WHERE UUID = ?";
@@ -179,14 +180,14 @@ public class UUIDDatabase {
             pstmt.setString(2, uuid.toString());
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("[UUIDDatabase] Erreur lors de la mise à jour du grade du joueur : " + e.getMessage());
+            System.err.println("[UUIDDatabase] Error while updating player's grade: " + e.getMessage());
         }
     }
 
     /**
-     * Définit la langue d’un joueur.
-     * @param uuid UUID du joueur
-     * @param language Langue à définir
+     * Sets the language of a player.
+     * @param uuid UUID of the player
+     * @param language Language to set
      */
     public void setPlayerLanguage(UUID uuid, String language) {
         String query = "INSERT INTO players_options (UUID, LANGUAGE) VALUES (?, ?) " +
@@ -197,14 +198,14 @@ public class UUIDDatabase {
             pstmt.setString(2, language);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("[UUIDDatabase] Erreur lors de la mise à jour de la langue du joueur : " + e.getMessage());
+            System.err.println("[UUIDDatabase] Error while updating player's language: " + e.getMessage());
         }
     }
 
     /**
-     * Récupère la langue d’un joueur.
-     * @param uuid UUID du joueur
-     * @return Langue du joueur, ou null si introuvable
+     * Retrieves the language of a player.
+     * @param uuid UUID of the player
+     * @return Language of the player, or null if not found
      */
     public String getPlayerLanguage(UUID uuid) {
         String query = "SELECT LANGUAGE FROM players_options WHERE UUID = ?";
@@ -217,7 +218,7 @@ public class UUIDDatabase {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("[UUIDDatabase] Erreur lors de la récupération de la langue du joueur : " + e.getMessage());
+            System.err.println("[UUIDDatabase] Error while retrieving player's language: " + e.getMessage());
         }
         return null;
     }
