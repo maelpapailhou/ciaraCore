@@ -18,8 +18,8 @@ public class LanguageManager {
             if (input != null) {
                 messages.load(input);
             } else {
-                // Si le fichier de langue n'existe pas, chargez la langue par défaut (en)
-                loadLanguage("en");
+                // Si le fichier de langue n'existe pas, chargez la langue par défaut (FR)
+                loadLanguage("fr");
             }
         } catch (Exception e) {
             System.err.println("Erreur lors du chargement du fichier de langue : " + fileName);

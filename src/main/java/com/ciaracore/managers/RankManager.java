@@ -1,6 +1,6 @@
 package com.ciaracore.managers;
 
-import com.ciaracore.databases.GradeDatabase;
+import com.ciaracore.databases.RankDatabase;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -8,35 +8,35 @@ import java.util.List;
 import java.util.Map;
 
 public class RankManager {
-    private final Map<String, Grade> gradeMap = new HashMap<>();
-    private final GradeDatabase gradeDatabase;
+    private final Map<String, Rank> rankMap = new HashMap<>();
+    private final RankDatabase rankDatabase;
 
-    public RankManager(GradeDatabase gradeDatabase) {
-        this.gradeDatabase = gradeDatabase;
-        loadGrades();
+    public RankManager(RankDatabase rankDatabase) {
+        this.rankDatabase = rankDatabase;
+        loadRanks();
     }
 
-    private void loadGrades() {
+    private void loadRanks() {
         try {
-            List<Grade> grades = gradeDatabase.fetchAllGrades();
-            for (Grade grade : grades) {
-                gradeMap.put(grade.getName(), grade);
+            List<Rank> ranks = rankDatabase.fetchAllRanks();
+            for (Rank rank : ranks) {
+                rankMap.put(rank.getName(), rank);
             }
-            System.out.println("[GradeManager] " + grades.size() + " grades chargés.");
+            System.out.println("[RankManager] " + ranks.size() + " ranks chargés.");
         } catch (SQLException e) {
-            System.err.println("[GradeManager] Erreur lors du chargement des grades : " + e.getMessage());
+            System.err.println("[RankManager] Erreur lors du chargement des ranks : " + e.getMessage());
         }
     }
 
-    public Grade getGrade(String gradeName) {
-        return gradeMap.get(gradeName);
+    public Rank getRank(String rankName) {
+        return rankMap.get(rankName);
     }
 
-    public static class Grade {
+    public static class Rank {
         private final String name;
         private final String prefix;
 
-        public Grade(String name, String prefix) {
+        public Rank(String name, String prefix) {
             this.name = name;
             this.prefix = prefix;
         }
@@ -50,13 +50,10 @@ public class RankManager {
         }
 
         /**
-         * Exemple : si le préfixe est "&c[Admin]", cette méthode peut l’interpréter et renvoyer
-         * un préfixe formaté avec des couleurs BungeeCord.
+         * Retourne le préfixe formaté avec les codes couleurs de BungeeCord/Minecraft.
          */
         public String getFormattedPrefix() {
-            // Si vous utilisez un utilitaire de traduction de couleurs, vous pouvez l'appliquer ici.
-            // Par exemple, ChatColor.translateAlternateColorCodes('&', prefix);
-            // Pour ce code d'exemple, on retourne le prefix tel quel.
+            // À adapter selon votre API de traduction de couleurs (si nécessaire)
             return prefix;
         }
     }

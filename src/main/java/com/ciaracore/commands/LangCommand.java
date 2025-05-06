@@ -9,15 +9,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class LanguageCommand extends Command {
+public class LangCommand extends Command {
 
     private final UUIDDatabase uuidDatabase;
 
     // Langues prises en charge
     private static final List<String> SUPPORTED_LANGUAGES = Arrays.asList("fr", "en", "es");
 
-    public LanguageCommand(UUIDDatabase uuidDatabase) {
-        super("language");
+    public LangCommand(UUIDDatabase uuidDatabase) {
+        super("lang");
         this.uuidDatabase = uuidDatabase;
     }
 
@@ -32,7 +32,7 @@ public class LanguageCommand extends Command {
 
         // Vérifie si un argument a été fourni
         if (args.length != 1) {
-            sender.sendMessage("Utilisation : /language <fr|en|es>");
+            sender.sendMessage("Utilisation : /lang <fr|en|es>");
             return;
         }
 

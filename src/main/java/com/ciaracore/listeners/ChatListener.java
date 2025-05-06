@@ -23,7 +23,6 @@ public class ChatListener implements Listener {
 
     @EventHandler
     public void onChat(ChatEvent event) {
-        // Vérifiez que l'expéditeur est un joueur et que ce n'est pas une commande
         if (!(event.getSender() instanceof ProxiedPlayer) || event.isCommand()) {
             return;
         }
@@ -31,21 +30,18 @@ public class ChatListener implements Listener {
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();
         UUID uuid = player.getUniqueId();
 
-        // Récupérez le grade du joueur
-        String gradeName = uuidDatabase.getPlayerGrade(uuid);
-        RankManager.Grade grade = rankManager.getGrade(gradeName);
+        // Récupérer le nom du rank depuis la BDD
+        String rankName = uuidDatabase.getPlayerRank(uuid); // cette méthode pourrait aussi être renommée en getPlayerRank()
+        RankManager.Rank rank = rankManager.getRank(rankName);
 
-        // Ajoutez le préfixe du grade (s'il existe)
-        String prefix = (grade != null) ? grade.getFormattedPrefix() : "";
+        // Formater le préfixe du rank
+        String prefix = (rank != null) ? rank.getFormattedPrefix() : "";
 
-        // Construisez le message formaté
+        // Construire le message chat avec couleur
         String formattedMessage = ChatColor.translateAlternateColorCodes('&',
                 prefix + " " + player.getName() + ChatColor.GRAY + ": " + ChatColor.WHITE + event.getMessage());
 
-        // Annulez l'envoi du message brut
         event.setCancelled(true);
-
-        // Diffusez le message formaté à tous les joueurs connectés
         ProxyServer.getInstance().getPlayers().forEach(p -> p.sendMessage(formattedMessage));
     }
 }

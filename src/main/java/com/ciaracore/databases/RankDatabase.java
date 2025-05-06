@@ -10,24 +10,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Classe qui gère la récupération et la mise à jour des grades dans la base de données.
+ * Classe qui gère la récupération et la mise à jour des ranks (grades) dans la base de données.
  */
-public class GradeDatabase {
+public class RankDatabase {
 
     private final ConnectDatabase connectDatabase;
 
-    public GradeDatabase(ConnectDatabase connectDatabase) {
+    public RankDatabase(ConnectDatabase connectDatabase) {
         this.connectDatabase = connectDatabase;
     }
 
     /**
-     * Récupère tous les grades disponibles dans la table des grades.
-     * @return Liste des grades sous forme d'objets Grade
+     * Récupère tous les ranks disponibles dans la table des grades.
+     * @return Liste des ranks sous forme d'objets Rank
      * @throws SQLException En cas d'erreur SQL
      */
-    public List<RankManager.Grade> fetchAllGrades() throws SQLException {
-        List<RankManager.Grade> grades = new ArrayList<>();
-        // On sélectionne GRADE et PREFIX (et non NAME, pour correspondre à ta table)
+    public List<RankManager.Rank> fetchAllRanks() throws SQLException {
+        List<RankManager.Rank> ranks = new ArrayList<>();
         String query = "SELECT GRADE, PREFIX FROM grades";
 
         try (Connection connection = connectDatabase.getConnection();
@@ -35,23 +34,22 @@ public class GradeDatabase {
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                // Récupération du nom du grade dans la colonne "GRADE"
-                String gradeName = resultSet.getString("GRADE");
+                String rankName = resultSet.getString("GRADE");
                 String prefix = resultSet.getString("PREFIX");
-                grades.add(new RankManager.Grade(gradeName, prefix));
+                ranks.add(new RankManager.Rank(rankName, prefix));
             }
         }
 
-        return grades;
+        return ranks;
     }
 
     /**
-     * Récupère le grade d'un joueur en fonction de son UUID.
+     * Récupère le rank d'un joueur en fonction de son UUID.
      * @param playerUUID L'UUID du joueur
-     * @return Nom du grade ou null si introuvable
+     * @return Nom du rank ou null si introuvable
      * @throws SQLException En cas d'erreur SQL
      */
-    public String getPlayerGrade(String playerUUID) throws SQLException {
+    public String getPlayerRank(String playerUUID) throws SQLException {
         String query = "SELECT GRADE FROM players WHERE UUID = ?";
         try (Connection connection = connectDatabase.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -64,22 +62,21 @@ public class GradeDatabase {
                 }
             }
         }
-        // Aucun grade trouvé
         return null;
     }
 
     /**
-     * Définit un grade spécifique pour un joueur.
+     * Définit un rank spécifique pour un joueur.
      * @param playerUUID L'UUID du joueur
-     * @param gradeName Le nom du grade à attribuer
+     * @param rankName Le nom du rank à attribuer
      * @throws SQLException En cas d'erreur SQL
      */
-    public void setPlayerGrade(String playerUUID, String gradeName) throws SQLException {
+    public void setPlayerRank(String playerUUID, String rankName) throws SQLException {
         String query = "UPDATE players SET GRADE = ? WHERE UUID = ?";
         try (Connection connection = connectDatabase.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
-            statement.setString(1, gradeName);
+            statement.setString(1, rankName);
             statement.setString(2, playerUUID);
             statement.executeUpdate();
         }
